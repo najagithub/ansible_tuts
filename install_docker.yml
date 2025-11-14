@@ -1,0 +1,6 @@
+---
+- name: Installer Docker sur tous les serveurs
+  hosts: all
+  become: yes
+  roles:
+    - docker

@@ -1,0 +1,30 @@
+---
+- name: Installer dépendances Docker
+  package:
+    name:
+      - tar
+      - xz
+    state: present
+
+- name: Installer docker depuis Amazon Linux Extras (si AL2)
+  when: ansible_distribution == "Amazon" and ansible_os_family == "RedHat" and ansible_distribution_major_version == "2"
+  command: amazon-linux-extras install docker -y
+
+- name: Installer docker pour Amazon Linux 2023
+  when: ansible_distribution == "Amazon" and ansible_distribution_major_version == "2023"
+  package:
+    name:
+      - docker
+    state: present
+
+- name: Activer et démarrer Docker
+  service:
+    name: docker
+    state: started
+    enabled: yes
+
+- name: Ajouter l’utilisateur ec2-user au groupe docker
+  user:
+    name: ec2-user
+    groups: docker
+    append: yes
