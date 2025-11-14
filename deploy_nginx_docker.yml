@@ -1,0 +1,19 @@
+---
+- name: Déployer NGINX en container Docker
+  hosts: webservers
+  become: yes
+
+  tasks:
+    - name: S’assurer que l’image est à jour
+      community.docker.docker_image:
+        name: nginx
+        source: pull
+
+    - name: Lancer le container NGINX
+      community.docker.docker_container:
+        name: nginx_server
+        image: nginx
+        state: started
+        restart_policy: always
+        published_ports:
+          - "80:80"
