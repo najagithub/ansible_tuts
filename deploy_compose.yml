@@ -1,0 +1,25 @@
+---
+- name: Déployer stack Docker Compose
+  hosts: webservers
+  become: yes
+
+  vars:
+    web_port: 8080
+    compose_path: "/opt/stack"
+
+  tasks:
+    - name: Créer dossier stack
+      file:
+        path: "{{ compose_path }}"
+        state: directory
+        mode: "0755"
+
+    - name: Déployer le fichier docker-compose.yml
+      template:
+        src: templates/docker-compose.yml.j2
+        dest: "{{ compose_path }}/docker-compose.yml"
+        
+    - name: Déployer la stack via Docker Compose (module officiel)
+      community.docker.docker_compose:
+        project_src: "{{ compose_path }}"
+        state: present

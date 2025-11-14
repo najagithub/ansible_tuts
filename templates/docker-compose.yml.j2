@@ -1,0 +1,16 @@
+version: "3.9"
+
+services:
+  web:
+    image: nginx
+    container_name: nginx-app
+    ports:
+      - "{{ web_port }}:80"
+    volumes:
+      - /opt/nginx-html:/usr/share/nginx/html:ro
+
+  php:
+    image: php:8.2-fpm
+    container_name: php-fpm
+    volumes:
+      - /opt/nginx-html:/var/www/html
