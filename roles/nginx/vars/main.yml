@@ -1,0 +1,5 @@
+---
+# vars file for roles/nginx
+site_title: "Mon site via un rôle"
+owner: "Andrianaja"
+message: "Déployé avec Ansible Roles"
