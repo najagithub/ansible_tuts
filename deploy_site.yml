@@ -1,21 +1,18 @@
 ---
-- name: Déployer un site HTML custom avec Ansible
+- name: Déployer un site HTML custom
   hosts: webservers
   become: yes
 
   tasks:
-    - name: Installer nginx
-      package:
-        name: nginx
-        state: present
-
-    - name: Créer le fichier index.html depuis template
+    - name: Template index.html
       template:
         src: templates/index.html.j2
         dest: /usr/share/nginx/html/index.html
         mode: '0644'
+      notify: restart nginx
 
-    - name: Redémarrer nginx
+  handlers:
+    - name: restart nginx
       service:
         name: nginx
         state: restarted
