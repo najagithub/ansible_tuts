@@ -1,0 +1,51 @@
+---
+- name: Déployer Nginx avec contenu personnalisé
+  hosts: webservers
+  become: yes
+
+  vars:
+    title: "Bienvenue sur le serveur web"
+    author: "Andrianaja"
+    container_name_nginx: "nginx-custom"
+
+  tasks:
+    - name: Stop nginx-custom container if it exists
+      community.docker.docker_container:
+        name: "{{ container_name_nginx }}"
+        state: stopped
+      ignore_errors: yes
+
+    - name: Créer dossier du site
+      file:
+        path: /opt/nginx-html
+        state: directory
+        mode: '0755'
+
+    - name: Déployer la page HTML personnalisée
+      template:
+        src: templates/index.html.j2
+        dest: /opt/nginx-html/index.html
+      notify: restart container
+
+    - name: Pull image Nginx
+      community.docker.docker_image:
+        name: nginx
+        source: pull
+
+    - name: Lancer le container Nginx avec volume
+      community.docker.docker_container:
+        name: "{{ container_name_nginx }}"
+        image: nginx
+        state: started
+        restart_policy: always
+        published_ports:
+          - "80:80"
+        volumes:
+          - "/opt/nginx-html:/usr/share/nginx/html:ro"
+
+  handlers:
+    - name: restart container
+      community.docker.docker_container:
+        name: nginx-custom
+        state: started
+        restart: yes
