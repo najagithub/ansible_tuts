@@ -8,10 +8,10 @@
     compose_path: "/opt/stack"
 
   tasks:
-    - name: Télécharger Docker Compose v2
-      get_url:
-        url: https://github.com/docker/compose/releases/download/v2.24.1/docker-compose-linux-x86_64
-        dest: /usr/local/bin/docker-compose
+    - name: Créer dossier html
+      file:
+        path: /opt/nginx-html
+        state: directory
         mode: '0755'
     - name: Déployer index.html
       copy:
@@ -19,7 +19,6 @@
         content: |
           <h1>Welcome to Nginx via Docker Compose!</h1>
           <p>Deployment succeeded.</p>
-
 
     - name: Créer dossier stack
       file:
