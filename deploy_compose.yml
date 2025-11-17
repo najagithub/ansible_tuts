@@ -8,6 +8,19 @@
     compose_path: "/opt/stack"
 
   tasks:
+    - name: Télécharger Docker Compose v2
+      get_url:
+        url: https://github.com/docker/compose/releases/download/v2.24.1/docker-compose-linux-x86_64
+        dest: /usr/local/bin/docker-compose
+        mode: '0755'
+    - name: Déployer index.html
+      copy:
+        dest: /opt/nginx-html/index.html
+        content: |
+          <h1>Welcome to Nginx via Docker Compose!</h1>
+          <p>Deployment succeeded.</p>
+
+
     - name: Créer dossier stack
       file:
         path: "{{ compose_path }}"
@@ -19,7 +32,6 @@
         src: templates/docker-compose.yml.j2
         dest: "{{ compose_path }}/docker-compose.yml"
         
-    - name: Déployer la stack via Docker Compose (module officiel)
-      community.docker.docker_compose:
-        project_src: "{{ compose_path }}"
-        state: present
+    - name: Déployer la stack via docker-compose CLI
+      command: docker-compose -f {{ compose_path }}/docker-compose.yml up -d
+
